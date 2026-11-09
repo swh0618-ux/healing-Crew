@@ -1,0 +1,51 @@
+name: iOS Cloud Build (Healing Crew)
+
+on:
+  push:
+    branches: [ "master", "main" ]
+  pull_request:
+    branches: [ "master", "main" ]
+  workflow_dispatch: # GitHub 웹에서 수동으로 'Run workflow' 버튼 클릭 가능
+
+jobs:
+  build-ios:
+    name: Build iOS IPA on Cloud Mac
+    runs-on: macos-14 # GitHub 제공 최신 Apple Silicon Mac 클라우드 러너
+
+    steps:
+      - name: 1. 프로젝트 코드 체크아웃
+        uses: actions/checkout@v4
+
+      - name: 2. Flutter SDK 최신 안정 버전 설치
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: 3. Flutter 의존성 패키지 다운로드
+        run: flutter pub get
+
+      - name: 4. iOS CocoaPods 의존성 설치
+        run: |
+          cd ios
+          pod install
+          cd ..
+
+      - name: 5. iOS 릴리즈 빌드 (Cloud Mac에서 컴파일)
+        run: |
+          flutter build ios --release --no-codesign
+
+      - name: 6. iPhone 설치용 IPA 파일로 패키징
+        run: |
+          mkdir -p build/ios/ipa/Payload
+          cp -r build/ios/iphoneos/Runner.app build/ios/ipa/Payload/
+          cd build/ios/ipa
+          zip -r HealingCrew.ipa Payload
+          cd ../../..
+
+      - name: 7. 완성된 IPA 설치 파일 업로드 (Artifacts)
+        uses: actions/upload-artifact@v4
+        with:
+          name: HealingCrew-iOS-IPA
+          path: build/ios/ipa/HealingCrew.ipa
+          retention-days: 7
