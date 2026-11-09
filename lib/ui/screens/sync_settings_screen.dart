@@ -131,7 +131,18 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
-                onPressed: () => notifier.requestPermissions(),
+                onPressed: () async {
+                  final granted = await notifier.requestPermissions();
+                  if (context.mounted && !granted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('권한 창이 뜨지 않을 경우: iPhone [설정] > [건강] > [데이터 접근 및 기기] > [Healing Crew]에서 직접 켜실 수 있습니다.'),
+                        backgroundColor: AppColors.warning,
+                        duration: Duration(seconds: 5),
+                      ),
+                    );
+                  }
+                },
                 icon: const Icon(Icons.security_rounded, size: 18),
                 label: const Text(
                   '건강 데이터 읽기 권한 요청',

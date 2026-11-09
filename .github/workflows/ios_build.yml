@@ -25,7 +25,7 @@ jobs:
       - name: 3. Flutter 의존성 패키지 다운로드
         run: flutter pub get
 
-      - name: 4. iOS 프로젝트 완전 스캐폴딩 및 Podfile 생성
+      - name: 4. iOS 프로젝트 완전 스캐폴딩 및 HealthKit Entitlements 주입
         run: |
           # 기존 HealthKit 권한 설정 백업
           cp ios/Runner/Info.plist Info.plist.bak
@@ -37,6 +37,21 @@ jobs:
           # HealthKit 권한 및 자격증명 복원
           cp Info.plist.bak ios/Runner/Info.plist
           cp Runner.entitlements.bak ios/Runner/Runner.entitlements
+          
+          # Xcode 빌드 설정 및 project.pbxproj에 HealthKit Entitlements 연결 주입
+          echo "CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements" >> ios/Flutter/Release.xcconfig
+          echo "CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements" >> ios/Flutter/Debug.xcconfig
+          
+          python3 -c "
+          p = 'ios/Runner.xcodeproj/project.pbxproj'
+          with open(p, 'r') as f:
+              s = f.read()
+          # 모든 buildSettings 블록에 CODE_SIGN_ENTITLEMENTS 삽입
+          s = s.replace('ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;', 'ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;\n\t\t\t\tCODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;')
+          with open(p, 'w') as f:
+              f.write(s)
+          print('HealthKit Entitlements injected successfully into project.pbxproj')
+          "
           
           # 의존성 갱신
           flutter pub get
