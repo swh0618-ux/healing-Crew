@@ -25,11 +25,21 @@ jobs:
       - name: 3. Flutter 의존성 패키지 다운로드
         run: flutter pub get
 
-      - name: 4. iOS CocoaPods 의존성 설치
+      - name: 4. iOS 프로젝트 완전 스캐폴딩 및 Podfile 생성
         run: |
-          cd ios
-          pod install
-          cd ..
+          # 기존 HealthKit 권한 설정 백업
+          cp ios/Runner/Info.plist Info.plist.bak
+          cp ios/Runner/Runner.entitlements Runner.entitlements.bak
+          
+          # Flutter 표준 iOS 프로젝트 파일(Xcode 프로젝트, Podfile, AppDelegate 등) 자동 생성
+          flutter create . --platforms=ios --org com.healingcrew
+          
+          # HealthKit 권한 및 자격증명 복원
+          cp Info.plist.bak ios/Runner/Info.plist
+          cp Runner.entitlements.bak ios/Runner/Runner.entitlements
+          
+          # 의존성 갱신
+          flutter pub get
 
       - name: 5. iOS 릴리즈 빌드 (Cloud Mac에서 컴파일)
         run: |
