@@ -10,7 +10,7 @@ enum SyncState {
 
 class SyncStatus {
   final SyncState state;
-  final String providerName; // "Apple HealthKit", "Google Health Connect", "Mock Simulator"
+  final String providerName; // "Apple HealthKit", "Google Health Connect"
   final DateTime? lastSyncTime;
   final int totalSyncedCount;
   final int newSyncedCount;

@@ -57,7 +57,7 @@ class HealthSyncNotifier extends StateNotifier<SyncStatus> {
   }
 
   /// 워치 및 건강 앱 러닝 데이터 동기화
-  Future<void> syncWorkouts({int daysBack = 14, bool forceMock = false}) async {
+  Future<void> syncWorkouts({int daysBack = 14}) async {
     // 중복 동기화 방지 (Race Condition 가드)
     if (state.isSyncing) return;
 
@@ -70,7 +70,6 @@ class HealthSyncNotifier extends StateNotifier<SyncStatus> {
       final fetchedRecords = await _service.fetchRunningWorkouts(
         startTime: startTime,
         endTime: now,
-        forceUseMock: forceMock,
       );
 
       final prevCount = _repository.records.length;

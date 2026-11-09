@@ -385,10 +385,10 @@ class DashboardScreen extends ConsumerWidget {
               foregroundColor: Colors.black,
             ),
             onPressed: () {
-              ref.read(healthSyncProvider.notifier).syncWorkouts(forceMock: true);
+              ref.read(healthSyncProvider.notifier).syncWorkouts();
             },
-            icon: const Icon(Icons.refresh_rounded, size: 16),
-            label: const Text('샘플 데이터 불러오기'),
+            icon: const Icon(Icons.sync_rounded, size: 16),
+            label: const Text('건강 데이터 즉시 동기화'),
           ),
         ],
       ),

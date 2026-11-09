@@ -14,7 +14,6 @@ class SyncSettingsScreen extends ConsumerStatefulWidget {
 
 class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
   int _selectedDaysBack = 14;
-  bool _useMockMode = false;
 
   @override
   Widget build(BuildContext context) {
@@ -48,10 +47,6 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
 
           // 워치 연동 원리 안내
           _buildIntegrationGuideCard(),
-          const SizedBox(height: 20),
-
-          // 개발 및 테스트용 모의 데이터 옵션
-          _buildDeveloperMockCard(notifier),
           const SizedBox(height: 32),
         ],
       ),
@@ -222,7 +217,6 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
                   : () async {
                       await notifier.syncWorkouts(
                         daysBack: _selectedDaysBack,
-                        forceMock: _useMockMode,
                       );
                       if (context.mounted) {
                         final currentStatus = ref.read(healthSyncProvider);
@@ -320,48 +314,6 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
           style: const TextStyle(color: AppColors.textSecondary, fontSize: 12, height: 1.4),
         ),
       ],
-    );
-  }
-
-  Widget _buildDeveloperMockCard(HealthSyncNotifier notifier) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceVariant.withOpacity(0.5),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border.withOpacity(0.3)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '시뮬레이터 / 모의 데이터 모드',
-                  style: TextStyle(color: AppColors.textPrimary, fontSize: 13, fontWeight: FontWeight.w600),
-                ),
-                SizedBox(height: 2),
-                Text(
-                  '실제 스마트워치 없이 가상 러닝 데이터(스플릿, 심박 곡선)로 테스트',
-                  style: TextStyle(color: AppColors.textMuted, fontSize: 11),
-                ),
-              ],
-            ),
-          ),
-          Switch(
-            value: _useMockMode,
-            activeColor: AppColors.primary,
-            onChanged: (val) {
-              setState(() => _useMockMode = val);
-              if (val) {
-                notifier.syncWorkouts(forceMock: true);
-              }
-            },
-          ),
-        ],
-      ),
     );
   }
 }

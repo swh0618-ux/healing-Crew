@@ -4,7 +4,6 @@ import 'package:health/health.dart';
 import '../models/running_record.dart';
 import '../models/pace_split.dart';
 import '../core/utils/pace_calculator.dart';
-import 'mock_running_generator.dart';
 
 class HealthSyncService {
   final Health _health = Health();
@@ -21,10 +20,10 @@ class HealthSyncService {
 
   /// 플랫폼 이름 반환
   String get platformProviderName {
-    if (kIsWeb) return '웹 브라우저 (시뮬레이션)';
+    if (kIsWeb) return '웹 브라우저';
     if (Platform.isIOS) return 'Apple 건강 (HealthKit)';
     if (Platform.isAndroid) return 'Google 헬스 커넥트 (Health Connect)';
-    return '데스크톱 개발 환경 (모의 데이터)';
+    return '데스크톱 환경';
   }
 
   /// 건강 API 초기화 및 환경 점검
@@ -43,7 +42,7 @@ class HealthSyncService {
   /// 건강 데이터 읽기 권한 확인
   Future<bool> checkPermissions() async {
     if (kIsWeb || (!Platform.isIOS && !Platform.isAndroid)) {
-      return true; // 데스크톱/웹 환경은 모의 데이터 사용
+      return false;
     }
 
     await configure();
@@ -60,7 +59,7 @@ class HealthSyncService {
   /// 건강 데이터 읽기 권한 요청
   Future<bool> requestPermissions() async {
     if (kIsWeb || (!Platform.isIOS && !Platform.isAndroid)) {
-      return true; // 가상 환경 승인 처리
+      return false;
     }
 
     await configure();
@@ -88,15 +87,13 @@ class HealthSyncService {
     }
   }
 
-  /// 최근 러닝 운동 기록 가져오기
+  /// 최근 러닝 운동 기록 가져오기 (100% 실제 건강 데이터만 조회)
   Future<List<RunningRecord>> fetchRunningWorkouts({
     required DateTime startTime,
     required DateTime endTime,
-    bool forceUseMock = false,
   }) async {
-    if (forceUseMock || kIsWeb || (!Platform.isIOS && !Platform.isAndroid)) {
-      // 모바일 네이티브 환경이 아니거나 모의 데이터 모드인 경우
-      return MockRunningGenerator.generateSampleRuns();
+    if (kIsWeb || (!Platform.isIOS && !Platform.isAndroid)) {
+      return [];
     }
 
     await configure();
