@@ -1,0 +1,33 @@
+name: healing_crew
+description: "워치 및 건강 앱 연동 러닝 기록 및 개인 분석 다이어리 앱"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: ">=3.10.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # 상태 관리
+  flutter_riverpod: ^2.5.1
+  
+  # 건강 데이터 (Apple HealthKit & Google Health Connect)
+  health: ^11.0.0
+  permission_handler: ^11.3.1
+  
+  # UI 및 차트
+  fl_chart: ^0.68.0
+  intl: ^0.19.0
+  flutter_staggered_animations: ^1.1.1
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
