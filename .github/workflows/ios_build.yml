@@ -10,7 +10,7 @@ on:
 jobs:
   build-ios:
     name: Build iOS IPA on Cloud Mac
-    runs-on: macos-latest # GitHub 제공 최신 지원 macOS 클라우드 러너
+    runs-on: macos-15-intel # GitHub 대기열 없는 macOS 15 Intel 고속 러너
 
     steps:
       - name: 1. 프로젝트 코드 체크아웃
